@@ -1,2 +1,4 @@
 img/
 .parser.py.swp
+.idea/
+cars.csv
