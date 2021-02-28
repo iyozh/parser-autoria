@@ -11,7 +11,8 @@ HEADERS = {
 }
 
 HOST = "https://avto.ria.com"
-PATH = 'cars.csv'
+PATH = "cars.csv"
+
 
 def get_html(url, params=None):
     response = requests.get(url, headers=HEADERS, params=params)
@@ -29,7 +30,7 @@ def get_content(html):
                     strip=True
                 ),
                 "link": HOST + item.find("a", class_="proposition_link").get("href"),
-                "photo": item.find('div', class_='photo-car').find('img').get('src'),
+                "photo": item.find("div", class_="photo-car").find("img").get("src"),
                 "USD": item.find("span", class_="green").get_text(strip=True),
                 "UAH": item.find("span", class_="grey size13").get_text(strip=True),
                 "city": item.find("div", class_="proposition_region size13")
@@ -39,32 +40,45 @@ def get_content(html):
         )
     return cars
 
+
 def pages_count(html):
-    soup = BeautifulSoup(html,'html.parser')
-    pagination = soup.find_all('span', class_="page-item mhide")
+    soup = BeautifulSoup(html, "html.parser")
+    pagination = soup.find_all("span", class_="page-item mhide")
     return int(pagination[-1].get_text())
 
+
 def parse():
-    url = input('Введите URL:').strip()
+    url = input("Введите URL:").strip()
     html = get_html(url)
     if not html.status_code == 200:
         return print("Error")
     pages = pages_count(html.text)
     cars = []
     for page in range(1, pages + 1):
-        html = get_html(url,params={'page': page})
+        html = get_html(url, params={"page": page})
         cars.extend(get_content(html.text))
     save_data(cars, PATH)
 
-def save_data(data,path):
-    with open(path,'w',newline="") as fp:
-        writer = csv.writer(fp, delimiter=';')
-        writer.writerow(['Brend', 'Link', 'USD', 'UAH', 'City', 'Image'])
+
+def save_data(data, path):
+    with open(path, "w", newline="") as fp:
+        writer = csv.writer(fp, delimiter=";")
+        writer.writerow(["Brend", "Link", "USD", "UAH", "City", "Image"])
         for item in data:
-            writer.writerow([item['title'], item['link'], item['USD'], item['UAH'], item['city'], item['photo']])
-            image = get_html(item['photo'])
+            writer.writerow(
+                [
+                    item["title"],
+                    item["link"],
+                    item["USD"],
+                    item["UAH"],
+                    item["city"],
+                    item["photo"],
+                ]
+            )
+            image = get_html(item["photo"])
             name = item["photo"].split("/")[-1]
-            with open(f'img/{name}', 'wb') as fp:
+            with open(f"img/{name}", "wb") as fp:
                 fp.write(image.content)
+
 
 parse()
