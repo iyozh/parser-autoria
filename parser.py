@@ -34,8 +34,8 @@ def get_content(html):
                 "USD": item.find("span", class_="green").get_text(strip=True),
                 "UAH": item.find("span", class_="grey size13").get_text(strip=True),
                 "city": item.find("div", class_="proposition_region size13")
-                .find_next("strong")
-                .get_text(strip=True),
+                    .find_next("strong")
+                    .get_text(strip=True),
             }
         )
     return cars
@@ -81,4 +81,6 @@ def save_data(data, path):
                 fp.write(image.content)
 
 
+if not os.path.exists('img/'):
+    os.mkdir('img/')
 parse()
