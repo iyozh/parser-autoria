@@ -77,10 +77,10 @@ def save_data(data, path):
             )
             image = get_html(item["photo"])
             name = item["photo"].split("/")[-1]
+
+            if not os.path.exists('img/'):
+                os.mkdir('img/')
             with open(f"img/{name}", "wb") as fp:
                 fp.write(image.content)
 
-
-if not os.path.exists('img/'):
-    os.mkdir('img/')
 parse()
